@@ -5,16 +5,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Shopping_List_API.Entities
+namespace Shopping_List_API.Models
 {
-    [Table("Account", Schema = "rcp")]
-    public class Account
+    public class AccountVM
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AccountId { get; set; }
         public string Email { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
+        public string Password { get; set; }
     }
 }
