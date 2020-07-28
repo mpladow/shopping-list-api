@@ -18,16 +18,18 @@ namespace Shopping_List_API.Entities
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<MethodItem> MethodItems { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<List> Lists { get; set; }
+        public DbSet<ListItem> ListItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<Account>().ToTable("Account", "rcp");
             modelBuilder.Entity<Category>().ToTable("Category", "rcp");
             modelBuilder.Entity<Ingredient>().ToTable("Ingredient", "rcp");
             modelBuilder.Entity<MethodItem>().ToTable("MethodItem", "rcp");
             modelBuilder.Entity<Recipe>().ToTable("Recipe", "rcp");
-
+            modelBuilder.Entity<List>().ToTable("List", "rcp");
+            modelBuilder.Entity<ListItem>().ToTable("ListItem", "rcp");
         }
 
     }

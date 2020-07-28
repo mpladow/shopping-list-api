@@ -10,8 +10,8 @@ using Shopping_List_API.Entities;
 namespace Shopping_List_API.Migrations
 {
     [DbContext(typeof(MLDevelopmentContext))]
-    [Migration("20200601073024_initial-migration")]
-    partial class initialmigration
+    [Migration("20200728115140_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,7 +29,9 @@ namespace Shopping_List_API.Migrations
 
                     b.Property<string>("Email");
 
-                    b.Property<string>("Password");
+                    b.Property<byte[]>("PasswordHash");
+
+                    b.Property<byte[]>("PasswordSalt");
 
                     b.HasKey("AccountId");
 
@@ -53,7 +55,7 @@ namespace Shopping_List_API.Migrations
 
             modelBuilder.Entity("Shopping_List_API.Entities.Ingredient", b =>
                 {
-                    b.Property<long>("IngredientId")
+                    b.Property<int>("IngredientId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -61,53 +63,97 @@ namespace Shopping_List_API.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<DateTime>("Quantity");
+                    b.Property<int>("PositionNo");
 
-                    b.Property<string>("RecipeId");
+                    b.Property<decimal>("Quantity");
 
-                    b.Property<long?>("RecipeId1");
+                    b.Property<int?>("RecipeId");
 
                     b.HasKey("IngredientId");
 
-                    b.HasIndex("RecipeId1");
+                    b.HasIndex("RecipeId");
 
                     b.ToTable("Ingredient","rcp");
                 });
 
-            modelBuilder.Entity("Shopping_List_API.Entities.MethodItem", b =>
+            modelBuilder.Entity("Shopping_List_API.Entities.List", b =>
                 {
-                    b.Property<long>("MethodItemId")
+                    b.Property<int>("ListId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("RecipeId");
+                    b.Property<int?>("AccountId");
 
-                    b.Property<long?>("RecipeId1");
+                    b.HasKey("ListId");
 
-                    b.Property<string>("StepNo");
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("List","rcp");
+                });
+
+            modelBuilder.Entity("Shopping_List_API.Entities.ListItem", b =>
+                {
+                    b.Property<int>("ListItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("IsComplete");
+
+                    b.Property<DateTime?>("IsDeleted");
+
+                    b.Property<int?>("ListId");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("Order");
+
+                    b.Property<int?>("Quantity");
+
+                    b.HasKey("ListItemId");
+
+                    b.HasIndex("ListId");
+
+                    b.ToTable("ListItem","rcp");
+                });
+
+            modelBuilder.Entity("Shopping_List_API.Entities.MethodItem", b =>
+                {
+                    b.Property<int>("MethodItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("RecipeId");
+
+                    b.Property<int>("StepNo");
 
                     b.Property<string>("Text");
 
                     b.HasKey("MethodItemId");
 
-                    b.HasIndex("RecipeId1");
+                    b.HasIndex("RecipeId");
 
                     b.ToTable("MethodItem","rcp");
                 });
 
             modelBuilder.Entity("Shopping_List_API.Entities.Recipe", b =>
                 {
-                    b.Property<long>("RecipeId")
+                    b.Property<int>("RecipeId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("CategoryId");
 
-                    b.Property<string>("Description");
+                    b.Property<DateTime?>("DeletedAt");
+
+                    b.Property<string>("DescriptionMain");
+
+                    b.Property<string>("DescriptionSecondary");
 
                     b.Property<string>("ImageUrl");
 
                     b.Property<string>("Name");
+
+                    b.Property<DateTime?>("PublishedAt");
 
                     b.HasKey("RecipeId");
 
@@ -120,14 +166,28 @@ namespace Shopping_List_API.Migrations
                 {
                     b.HasOne("Shopping_List_API.Entities.Recipe", "Recipe")
                         .WithMany("Ingredients")
-                        .HasForeignKey("RecipeId1");
+                        .HasForeignKey("RecipeId");
+                });
+
+            modelBuilder.Entity("Shopping_List_API.Entities.List", b =>
+                {
+                    b.HasOne("Shopping_List_API.Entities.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId");
+                });
+
+            modelBuilder.Entity("Shopping_List_API.Entities.ListItem", b =>
+                {
+                    b.HasOne("Shopping_List_API.Entities.List", "List")
+                        .WithMany("ListItems")
+                        .HasForeignKey("ListId");
                 });
 
             modelBuilder.Entity("Shopping_List_API.Entities.MethodItem", b =>
                 {
                     b.HasOne("Shopping_List_API.Entities.Recipe", "Recipe")
                         .WithMany("MethodItems")
-                        .HasForeignKey("RecipeId1");
+                        .HasForeignKey("RecipeId");
                 });
 
             modelBuilder.Entity("Shopping_List_API.Entities.Recipe", b =>

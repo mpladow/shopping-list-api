@@ -37,7 +37,6 @@ namespace Shopping_List_API.Controllers
         }
 
         // GET: api/Account/5
-        [HttpGet("{id}", Name = "Get")]
         public string Get(int id)
         {
             return "value";
@@ -45,7 +44,7 @@ namespace Shopping_List_API.Controllers
 
         // POST: api/Authenticate
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("Authenticate")]
         public IActionResult Authenticate([FromBody]AccountVM model)
         {
             var user = _userService.Authenticate(model.Email, model.Password);

@@ -7,17 +7,18 @@ using System.Threading.Tasks;
 
 namespace Shopping_List_API.Entities
 {
-    [Table("Ingredient", Schema = "rcp")]
-    public class Ingredient
+    [Table("ListItem", Schema = "rcp")]
+    public class ListItem
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IngredientId { get; set; }
+        public int ListItemId { get; set; }
         public string Name { get; set; }
-        public decimal Quantity { get; set; }
-        public string Measure { get; set; }
-        public int PositionNo { get; set; }
+        public int? Quantity { get; set; }
+        public DateTime? IsDeleted { get; set; }
+        public DateTime? IsComplete { get; set; }
+        public int Order { get; set; }
+        public virtual List List { get; set; }
 
-        public virtual Recipe Recipe { get; set; }
     }
 }

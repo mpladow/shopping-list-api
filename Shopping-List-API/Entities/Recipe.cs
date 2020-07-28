@@ -12,13 +12,16 @@ namespace Shopping_List_API.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long RecipeId { get; set; }
+        public int RecipeId { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string DescriptionMain { get; set; }
+        public string DescriptionSecondary { get; set; }
         public string ImageUrl { get; set; }
+        public DateTime? DeletedAt { get; set; }
+        public DateTime? PublishedAt { get; set; }
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
-        public ICollection<MethodItem> MethodItems{ get; set; }
-        public ICollection<Ingredient> Ingredients{ get; set; }
+        public virtual Category Category { get; set; }
+        public virtual ICollection<MethodItem> MethodItems{ get; set; }
+        public virtual ICollection<Ingredient> Ingredients{ get; set; }
     }
 }

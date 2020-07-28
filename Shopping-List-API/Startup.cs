@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Shopping_List_API.Entities;
 using Shopping_List_API.Helpers;
+using Shopping_List_API.Models;
 using Shopping_List_API.Services;
 
 namespace Shopping_List_API
@@ -36,10 +38,23 @@ namespace Shopping_List_API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<MLDevelopmentContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MLDevelopment_Dev"))
+                .UseLazyLoadingProxies()
             );
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRecipesService, RecipesService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAdminRecipeService, AdminRecipeService>();
 
+            // setup AutoMapper
+            var mappingConfig = new MapperConfiguration(mc => { 
+                mc.AddProfile(new MappingProfile()); 
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            // setup a variable to get settings from App
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -51,6 +66,13 @@ namespace Shopping_List_API
             })
             .AddJwtBearer(x =>
             {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
                 x.Events = new JwtBearerEvents
                 {
                     OnTokenValidated = context =>
@@ -68,13 +90,6 @@ namespace Shopping_List_API
                 };
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
             });
         }
 
@@ -98,7 +113,6 @@ namespace Shopping_List_API
                 .AllowAnyHeader());
 
             app.UseAuthentication();
-
             app.UseHttpsRedirection();
             app.UseMvc();
         }

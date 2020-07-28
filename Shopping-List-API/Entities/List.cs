@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace Shopping_List_API.Entities
 {
-    [Table("MethodItem", Schema = "rcp")]
-    public class MethodItem
+    [Table("List", Schema = "rcp")]
+    public class List
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int MethodItemId { get; set; }
-        public int StepNo { get; set; }
-        public string Text { get; set; }
-        public virtual Recipe Recipe { get; set; }
+        public int ListId { get; set; }
+        public virtual Account Account { get; set; }
+        public virtual ICollection<ListItem> ListItems{ get; set; }
     }
 }
