@@ -14,7 +14,7 @@ namespace Shopping_List_API.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IngredientId { get; set; }
         public string Name { get; set; }
-        public decimal Quantity { get; set; }
+        public decimal? Quantity { get; set; }
         public string Measure { get; set; }
         public int PositionNo { get; set; }
 

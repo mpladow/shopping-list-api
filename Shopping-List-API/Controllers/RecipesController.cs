@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Shopping_List_API.Models;
 using Shopping_List_API.Services;
 
@@ -24,19 +25,71 @@ namespace Shopping_List_API.Controllers
         }
         // GET: api/Recipes
         [HttpGet("GetPublishedRecipes")]
-        public IEnumerable<RecipeVM> GetPublishedRecipes()
+        public IEnumerable<RecipeVM> GetPublishedRecipes([FromQuery]RecipeParameters recipeParameters)
         {
-            var recipeFromService = _recipesService.GetAllRecipes();
+            var recipeFromService = _recipesService.GetAllRecipes(recipeParameters);
 
-            var result = _mapper.Map<List<RecipeVM>>(recipeFromService);
+            var metaData = new
+            {
+                recipeFromService.TotalCount,
+                recipeFromService.PageSize,
+                recipeFromService.CurrentPage,
+                recipeFromService.TotalPages,
+                recipeFromService.HasNext,
+                recipeFromService.HasPrevious
+            };
+            var list = recipeFromService.Select(r => new RecipeVM
+            {
+                RecipeId = r.RecipeId,
+                Name = r.Name,
+                CategoryName = r.Category.Name,
+                DescriptionPrimary = r.DescriptionMain,
+                DescriptionSecondary = r.DescriptionSecondary,
+                ImageUrl = r.ImageUrl
+            }).ToList();
 
-            return result;
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+
+            return list;
         }
 
-        // GET: api/Recipes/5
-        public string Get(int id)
+        [HttpGet("GetRecipesByCategory")]
+        public IEnumerable<RecipeVM> GetRecipesByCategory([FromQuery]RecipeParameters recipeParameters)
         {
-            return "value";
+            var recipeFromService = _recipesService.GetRecipesByCategory(recipeParameters);
+
+            var metaData = new
+            {
+                recipeFromService.TotalCount,
+                recipeFromService.PageSize,
+                recipeFromService.CurrentPage,
+                recipeFromService.TotalPages,
+                recipeFromService.HasNext,
+                recipeFromService.HasPrevious
+            };
+            var list = recipeFromService.Select(r => new RecipeVM
+            {
+                RecipeId = r.RecipeId,
+                Name = r.Name,
+                CategoryName = r.Category.Name,
+                DescriptionPrimary = r.DescriptionMain,
+                DescriptionSecondary = r.DescriptionSecondary,
+                ImageUrl = r.ImageUrl
+            }).ToList();
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
+
+            return list;
+        }
+
+
+        // GET: api/Recipes/5
+        [HttpGet("{id}")]
+        public RecipeVM Get(int id)
+        {
+            Entities.Recipe recipeFromService = _recipesService.GetRecipeById(id);
+            var result = _mapper.Map<RecipeVM>(recipeFromService);
+            return result;
         }
 
         // POST: api/Recipes

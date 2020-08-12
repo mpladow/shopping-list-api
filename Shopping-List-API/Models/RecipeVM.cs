@@ -25,6 +25,7 @@ namespace Shopping_List_API.Models
         public DateTime? DeletedAt { get; set; }
         public DateTime? PublishedAt { get; set; }
         public int? CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public CategoryVM Category { get; set; }
         public List<MethodItemVM> MethodItems{ get; set; }
         public List<IngredientVM> Ingredients{ get; set; }

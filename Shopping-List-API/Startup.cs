@@ -38,7 +38,7 @@ namespace Shopping_List_API
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<MLDevelopmentContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("MLDevelopment_Dev"))
-                .UseLazyLoadingProxies()
+                //.UseLazyLoadingProxies()
             );
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
@@ -47,12 +47,14 @@ namespace Shopping_List_API
             services.AddScoped<IAdminRecipeService, AdminRecipeService>();
 
             // setup AutoMapper
-            var mappingConfig = new MapperConfiguration(mc => { 
-                mc.AddProfile(new MappingProfile()); 
-            });
+            services.AddAutoMapper(c => c.AddProfile<MappingProfile>(), typeof(Startup));
+            //var mappingConfig = new MapperConfiguration(mc =>
+            //{
+            //    mc.AddProfile(new MappingProfile());
+            //});
 
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            //IMapper mapper = mappingConfig.CreateMapper();
+            //services.AddSingleton(mapper);
 
             // setup a variable to get settings from App
             var appSettingsSection = Configuration.GetSection("AppSettings");

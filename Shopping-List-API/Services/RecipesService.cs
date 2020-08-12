@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shopping_List_API.Entities;
+using Shopping_List_API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,9 @@ namespace Shopping_List_API.Services
 {
     public interface IRecipesService
     {
-        List<Recipe> GetAllRecipes();
+        PagedList<Recipe> GetAllRecipes(RecipeParameters recipeParameters);
         Recipe GetRecipeById(int id);
+        PagedList<Recipe> GetRecipesByCategory(RecipeParameters recipeParameters);
     }
     public class RecipesService : IRecipesService
     {
@@ -21,19 +23,34 @@ namespace Shopping_List_API.Services
             _db = db;
         }
 
-        public List<Recipe> GetAllRecipes()
+        public PagedList<Recipe> GetAllRecipes(RecipeParameters recipeParameters)
         {
-            var recipes = _db.Recipes
-                .Where(x => !x.DeletedAt.HasValue)
-                .Where(x => x.PublishedAt.HasValue)
-                .Include(recipe => recipe.Ingredients)
-                .Include(recipe => recipe.MethodItems)
-                .ToList();
-            return recipes;
+            return PagedList<Recipe>.ToPagedList(_db.Recipes
+                .Include(rcp => rcp.Category)
+                .Include(rcp => rcp.Ingredients)
+                .Include(rcp => rcp.MethodItems)
+                .Where(r => r.DeletedAt == null),
+                recipeParameters.PageNumber,
+                recipeParameters.PageSize);
         }
         public Recipe GetRecipeById(int id)
         {
-            return _db.Recipes.Find(id);
+            return _db.Recipes
+                .Include(r => r.Category)
+                .Include(r => r.MethodItems)
+                .Include(r => r.Ingredients)
+                .FirstOrDefault(r => r.RecipeId == id);
+        }
+        public PagedList<Recipe> GetRecipesByCategory(RecipeParameters recipeParameters)
+        {
+            return PagedList<Recipe>.ToPagedList(_db.Recipes
+                .Include(rcp => rcp.Category)
+                .Include(rcp => rcp.Ingredients)
+                .Include(rcp => rcp.MethodItems)
+                .Where(r => r.DeletedAt == null)
+                .Where(r => r.CategoryId == recipeParameters.Id),
+                recipeParameters.PageNumber,
+                recipeParameters.PageSize);
         }
     }
 }

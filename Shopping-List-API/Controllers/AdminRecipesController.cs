@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Shopping_List_API.Entities;
 using Shopping_List_API.Models;
 using Shopping_List_API.Services;
 
@@ -14,23 +18,49 @@ namespace Shopping_List_API.Controllers
     public class AdminRecipesController : ControllerBase
     {
         private IAdminRecipeService _adminRecipeService;
-        public AdminRecipesController(IAdminRecipeService adminRecipeService)
+        private IMapper _mapper;
+        public AdminRecipesController(IAdminRecipeService adminRecipeService, IMapper mapper)
         {
+            _mapper = mapper;
             _adminRecipeService = adminRecipeService;
         }
         // GET: api/AdminRecipes
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<RecipeVM> Get([FromQuery]AdminRecipeParameters parameters)
         {
-            var adminRecipesFromService = _adminRecipeService.GetAllRecipes();
-            return new string[] { "value1", "value2" };
+            var adminRecipesFromService = _adminRecipeService.GetAllRecipes(parameters);
+
+            var metadata = new
+            {
+                adminRecipesFromService.TotalCount,
+                adminRecipesFromService.PageSize,
+                adminRecipesFromService.CurrentPage,
+                adminRecipesFromService.TotalPages,
+                adminRecipesFromService.HasNext,
+                adminRecipesFromService.HasPrevious
+            };
+
+            var list = adminRecipesFromService.Select(r => new RecipeVM
+            {
+                RecipeId = r.RecipeId,
+                Name = r.Name,
+                CategoryName = r.Category.Name,
+                PublishedAt = r.PublishedAt,
+            }).ToList();
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            return list;
         }
 
         // GET: api/AdminRecipes/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public RecipeVM Get(int id)
         {
-            return "value";
+            var recipeFromDb = _adminRecipeService.GetRecipeById(id);
+            var model = new RecipeVM();
+            _mapper.Map(recipeFromDb, model);
+            return model;
         }
 
         // POST: api/AdminRecipes
@@ -39,8 +69,16 @@ namespace Shopping_List_API.Controllers
         {
             try
             {
-            //use service to create new recipe and add to db.
-            var response = _adminRecipeService.CreateNewRecipe(recipe);
+                var response = false;
+                if (recipe.RecipeId > 0)
+                {
+                    response = _adminRecipeService.EditRecipe(recipe);
+                }
+                else
+                {
+                    //use service to create new recipe and add to db.
+                    response = _adminRecipeService.CreateNewRecipe(recipe);
+                }
                 return Ok(response);
             }
             catch (Exception ex)
