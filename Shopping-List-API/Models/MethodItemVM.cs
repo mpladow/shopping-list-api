@@ -11,8 +11,7 @@ namespace Shopping_List_API.Models
     {
         public int? MethodItemId { get; set; }
         public int RecipeId { get; set; }
-        public string StepNo { get; set; }
+        public int StepNo { get; set; }
         public string Text { get; set; }
-        public RecipeVM Recipe { get; set; }
     }
 }

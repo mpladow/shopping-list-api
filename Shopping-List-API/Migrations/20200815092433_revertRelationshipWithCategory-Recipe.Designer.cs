@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shopping_List_API.Entities;
 
 namespace Shopping_List_API.Migrations
 {
     [DbContext(typeof(MLDevelopmentContext))]
-    partial class MLDevelopmentContextModelSnapshot : ModelSnapshot
+    [Migration("20200815092433_revertRelationshipWithCategory-Recipe")]
+    partial class revertRelationshipWithCategoryRecipe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

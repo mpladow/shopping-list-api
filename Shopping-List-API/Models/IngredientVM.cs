@@ -12,9 +12,8 @@ namespace Shopping_List_API.Models
         public int? IngredientId { get; set; }
         public int RecipeId { get; set; }
         public string Name { get; set; }
-        public int? Quantity { get; set; }
+        public decimal? Quantity { get; set; }
         public string Measure { get; set; }
-
-        public RecipeVM Recipe { get; set; }
+        public int? PositionNo { get; set; }
     }
 }

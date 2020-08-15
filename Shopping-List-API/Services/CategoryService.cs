@@ -22,7 +22,7 @@ namespace Shopping_List_API.Services
 
         public List<Category> GetAllCategories()
         {
-            return _db.Categories.ToList();
+            return _db.Categories.OrderBy(c => c.Order).ToList();
         }
     }
 }

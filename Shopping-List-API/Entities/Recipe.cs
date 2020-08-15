@@ -14,7 +14,7 @@ namespace Shopping_List_API.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RecipeId { get; set; }
         public string Name { get; set; }
-        public string DescriptionMain { get; set; }
+        public string DescriptionPrimary { get; set; }
         public string DescriptionSecondary { get; set; }
         public string ImageUrl { get; set; }
         public DateTime? DeletedAt { get; set; }

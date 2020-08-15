@@ -11,12 +11,16 @@ namespace Shopping_List_API.Models
     {
         public MappingProfile()
         {
-            CreateMap<Recipe, RecipeVM>();
-            CreateMap<RecipeVM, Recipe>();
-            CreateMap<RecipeListItemVM, Recipe>();
-            CreateMap<Recipe, RecipeListItemVM>();
-            CreateMap<Category, CategoryVM>();
-            CreateMap<CategoryVM, Category>();
+            CreateMap<Recipe, RecipeVM>()
+                .ForMember(dest => dest.CategoryName, 
+                opts => opts.MapFrom(src => src.Category.Name)).ReverseMap();
+            //CreateMap<RecipeVM, Recipe>();
+            CreateMap<MethodItem, MethodItemVM>().ReverseMap();
+            CreateMap<Ingredient, IngredientVM>().ReverseMap();
+            CreateMap<Recipe, RecipeListItemVM>().ReverseMap();
+            //CreateMap<RecipeListItemVM, Recipe>();
+            CreateMap<Category, CategoryVM>().ReverseMap();
+            //CreateMap<CategoryVM, Category>();
         }
     }
 }
