@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,9 +23,11 @@ namespace Shopping_List_API.Models
         public string DescriptionPrimary { get; set; }
         public string DescriptionSecondary { get; set; }
         public string ImageUrl { get; set; }
+        public string ImageFile { get; set; }
+        public IFormFile Image { get; set; }
         public DateTime? DeletedAt { get; set; }
         public DateTime? PublishedAt { get; set; }
-        public int? CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public CategoryVM Category { get; set; }
         public List<MethodItemVM> MethodItems{ get; set; }

@@ -93,6 +93,8 @@ namespace Shopping_List_API
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
             });
+            services.AddSingleton<IAzureBlobConnectionFactory, AzureBlobConnectionFactory>();
+            services.AddSingleton<IAzureBlobService, AzureBlobService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -60,6 +60,14 @@ namespace Shopping_List_API.Controllers
             var recipeFromDb = _adminRecipeService.GetRecipeById(id);
             var model = new RecipeVM();
             _mapper.Map(recipeFromDb, model);
+
+            // get image from azure
+            if (model.ImageUrl != null)
+            {
+                var base64 = _adminRecipeService.GetBase64RecipeImage(model.ImageUrl);
+                model.ImageFile = base64;
+            }
+
             return model;
         }
 

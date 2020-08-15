@@ -43,7 +43,7 @@ namespace Shopping_List_API.Controllers
                 RecipeId = r.RecipeId,
                 Name = r.Name,
                 CategoryName = r.Category.Name,
-                DescriptionPrimary = r.DescriptionMain,
+                DescriptionPrimary = r.DescriptionPrimary,
                 DescriptionSecondary = r.DescriptionSecondary,
                 ImageUrl = r.ImageUrl
             }).ToList();
@@ -72,10 +72,18 @@ namespace Shopping_List_API.Controllers
                 RecipeId = r.RecipeId,
                 Name = r.Name,
                 CategoryName = r.Category.Name,
-                DescriptionPrimary = r.DescriptionMain,
+                DescriptionPrimary = r.DescriptionPrimary,
                 DescriptionSecondary = r.DescriptionSecondary,
                 ImageUrl = r.ImageUrl
             }).ToList();
+            list.ForEach(r =>
+            {
+                if (r.ImageUrl != null)
+                {
+                    var base64 = _recipesService.GetBase64RecipeImage(r.ImageUrl);
+                    r.ImageFile = base64;
+                }
+            });
 
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
 
@@ -87,9 +95,18 @@ namespace Shopping_List_API.Controllers
         [HttpGet("{id}")]
         public RecipeVM Get(int id)
         {
+            var model = new RecipeVM();
             Entities.Recipe recipeFromService = _recipesService.GetRecipeById(id);
-            var result = _mapper.Map<RecipeVM>(recipeFromService);
-            return result;
+            _mapper.Map(recipeFromService, model);
+            // get image from azure
+            if (model.ImageUrl != null)
+            {
+                var base64 = _recipesService.GetBase64RecipeImage(model.ImageUrl);
+                model.ImageFile = base64;
+            }
+            model.Ingredients.OrderBy(i => i.PositionNo).ToList();
+            model.MethodItems.OrderBy(i => i.StepNo).ToList();
+            return model;
         }
 
         // POST: api/Recipes

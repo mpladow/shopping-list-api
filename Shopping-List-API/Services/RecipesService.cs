@@ -13,14 +13,19 @@ namespace Shopping_List_API.Services
         PagedList<Recipe> GetAllRecipes(RecipeParameters recipeParameters);
         Recipe GetRecipeById(int id);
         PagedList<Recipe> GetRecipesByCategory(RecipeParameters recipeParameters);
+        string GetBase64RecipeImage(string fileName);
     }
     public class RecipesService : IRecipesService
     {
         private MLDevelopmentContext _db;
+        private IAzureBlobService _azureBlobService;
+        private string imageContainerName = "shopping-app";
 
-        public RecipesService(MLDevelopmentContext db)
+        public RecipesService(MLDevelopmentContext db, IAzureBlobService azureBlobService)
         {
             _db = db;
+            _azureBlobService = azureBlobService;
+
         }
 
         public PagedList<Recipe> GetAllRecipes(RecipeParameters recipeParameters)
@@ -35,11 +40,12 @@ namespace Shopping_List_API.Services
         }
         public Recipe GetRecipeById(int id)
         {
-            return _db.Recipes
+            var recipe = _db.Recipes
                 .Include(r => r.Category)
                 .Include(r => r.MethodItems)
                 .Include(r => r.Ingredients)
                 .FirstOrDefault(r => r.RecipeId == id);
+            return recipe;
         }
         public PagedList<Recipe> GetRecipesByCategory(RecipeParameters recipeParameters)
         {
@@ -51,6 +57,12 @@ namespace Shopping_List_API.Services
                 .Where(r => r.CategoryId == recipeParameters.Id),
                 recipeParameters.PageNumber,
                 recipeParameters.PageSize);
+        }
+        public string GetBase64RecipeImage(string fileName)
+        {
+            var base64 = _azureBlobService.GetBase64ByNameAsync(fileName, imageContainerName);
+            return base64.Result;
+
         }
     }
 }
