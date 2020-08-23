@@ -2,3 +2,9 @@
 Shopping-List-API/bin/Debug/netcoreapp2.2/appsettings.json
 Shopping-List-API/appsettings.json
 Shopping-List-API/bin/Release/netcoreapp2.2/appsettings.json
+Shopping-List-API/bin/Release/netcoreapp2.2/appsettings.Development.json
+Shopping-List-API/obj/Release/netcoreapp2.2/PubTmp/Out/appsettings.Development.json
+Shopping-List-API/obj/Release/netcoreapp2.2/PubTmp/Out/appsettings.production.json
+Shopping-List-API/obj/Release/netcoreapp2.2/PubTmp/Out/appsettings.json
+Shopping-List-API/bin/Debug/netcoreapp2.2/appsettings.json
+Shopping-List-API/bin/Debug/netcoreapp2.2/appsettings.Development.json
