@@ -6,6 +6,7 @@ C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\bin\Debug\netcor
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\bin\Debug\netcoreapp2.2\Shopping-List-API.runtimeconfig.dev.json
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\bin\Debug\netcoreapp2.2\Shopping-List-API.dll
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\bin\Debug\netcoreapp2.2\Shopping-List-API.pdb
+C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.csproj.CoreCompileInputs.cache
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.RazorAssemblyInfo.cache
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.RazorAssemblyInfo.cs
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.AssemblyInfoInputs.cache
@@ -15,4 +16,3 @@ C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcor
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.pdb
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.genruntimeconfig.cache
 C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.csprojAssemblyReference.cache
-C:\Users\mplad\source\repos\shopping-list-api\Shopping-List-API\obj\Debug\netcoreapp2.2\Shopping-List-API.csproj.CoreCompileInputs.cache

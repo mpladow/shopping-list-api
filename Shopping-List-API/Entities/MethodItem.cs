@@ -15,6 +15,8 @@ namespace Shopping_List_API.Entities
         public int MethodItemId { get; set; }
         public int StepNo { get; set; }
         public string Text { get; set; }
+        public bool Seperator { get; set; }
+
         public virtual Recipe Recipe { get; set; }
     }
 }

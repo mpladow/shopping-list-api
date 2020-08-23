@@ -77,7 +77,7 @@ namespace Shopping_List_API.Controllers
         {
             try
             {
-                var response = false;
+                var response = 0;
                 if (recipe.RecipeId > 0)
                 {
                     response = _adminRecipeService.EditRecipe(recipe);
@@ -104,8 +104,10 @@ namespace Shopping_List_API.Controllers
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public bool Delete(int id)
         {
+            var response = _adminRecipeService.DeleteRecipeById(id);
+            return response;
         }
     }
 }

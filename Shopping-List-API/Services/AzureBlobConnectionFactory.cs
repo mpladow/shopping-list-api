@@ -25,10 +25,10 @@ namespace Shopping_List_API.Services
 
         public async Task<CloudBlobContainer> GetBlobContainer(string name)
         {
-            if (_blobContainer != null)
-            {
-                return _blobContainer;
-            }
+            //if (_blobContainer != null)
+            //{
+            //    return _blobContainer;
+            //}
             //get container name from config
             //var containerName = _configuration.GetValue<string>(name);
             //if (String.IsNullOrEmpty(containerName))
@@ -52,7 +52,8 @@ namespace Shopping_List_API.Services
             {
                 return _blobClient;
             }
-            var storageConnectionString = _configuration.GetValue<string>("StorageConnectionString");
+            
+            var storageConnectionString = _configuration.GetValue<string>("AzureStorage");
             if (string.IsNullOrEmpty(storageConnectionString))
             {
                 throw new ArgumentException("Config must container StorageConnectionString");

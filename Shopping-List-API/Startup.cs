@@ -24,10 +24,18 @@ namespace Shopping_List_API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
+            //var builder = new ConfigurationBuilder()
+            //    .SetBasePath(env.ContentRootPath)
+            //    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            //    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+            //    .AddEnvironmentVariables();
+            //Configuration = builder.Build();
         }
+        private readonly IHostingEnvironment _env;
 
         public IConfiguration Configuration { get; }
 
@@ -37,8 +45,8 @@ namespace Shopping_List_API
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<MLDevelopmentContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MLDevelopment_Dev"))
-                //.UseLazyLoadingProxies()
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            //.UseLazyLoadingProxies()
             );
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
@@ -93,7 +101,7 @@ namespace Shopping_List_API
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
             });
-            services.AddSingleton<IAzureBlobConnectionFactory, AzureBlobConnectionFactory>();
+            services.AddTransient<IAzureBlobConnectionFactory, AzureBlobConnectionFactory>();
             services.AddSingleton<IAzureBlobService, AzureBlobService>();
         }
 
@@ -104,10 +112,12 @@ namespace Shopping_List_API
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
+
+            if (env.IsProduction() || env.IsStaging() || env.IsEnvironment("Staging_2"))
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseExceptionHandler("/Error");
             }
 
             // global cors policy

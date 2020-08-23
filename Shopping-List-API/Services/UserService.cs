@@ -19,7 +19,7 @@ namespace Shopping_List_API.Services
         void Delete(int id);
 
     }
-    public class UserService: IUserService
+    public class UserService : IUserService
     {
         private MLDevelopmentContext _db;
 
@@ -33,16 +33,25 @@ namespace Shopping_List_API.Services
             if (String.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var account = _db.Accounts.FirstOrDefault(a => a.Email == username);
+            try
+            {
+                var account = _db.Accounts.FirstOrDefault(a => a.Email == username);
 
-            if (account == null)
-                return null;
-            // check password
-            if (!VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt))
-                return null;
-            //authentication successful
+                if (account == null)
+                    return null;
+                // check password
+                if (!VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt))
+                    return null;
+                //authentication successful
 
-            return account;
+                return account;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
         }
 
         public Account Create(Account account, string password)

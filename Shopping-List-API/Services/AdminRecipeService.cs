@@ -20,9 +20,10 @@ namespace Shopping_List_API.Services
     {
         PagedList<Recipe> GetAllRecipes(AdminRecipeParameters adminRecipeParameters);
         Recipe GetRecipeById(int id);
-        bool CreateNewRecipe(RecipeVM recipe);
-        bool EditRecipe(RecipeVM recipe);
+        int CreateNewRecipe(RecipeVM recipe);
+        int EditRecipe(RecipeVM recipe);
         string GetBase64RecipeImage(string imageName);
+        bool DeleteRecipeById(int id);
     }
     public class AdminRecipeService : IAdminRecipeService
     {
@@ -38,7 +39,7 @@ namespace Shopping_List_API.Services
             _azureBlobService = azureBlobService;
         }
 
-        public bool CreateNewRecipe(RecipeVM recipe)
+        public int CreateNewRecipe(RecipeVM recipe)
         {
             try
             {
@@ -55,9 +56,7 @@ namespace Shopping_List_API.Services
                     if (!string.IsNullOrEmpty(currentIngredient.Name))
                     {
                         var ingredient = new Ingredient();
-                        ingredient.Name = currentIngredient.Name;
-                        ingredient.Measure = currentIngredient.Measure;
-                        ingredient.Quantity = currentIngredient.Quantity;
+                        _mapper.Map(currentIngredient, ingredient);
                         ingredient.PositionNo = i + 1;
                         entity.Ingredients.Add(ingredient);
                     }
@@ -69,9 +68,23 @@ namespace Shopping_List_API.Services
                     if (!string.IsNullOrEmpty(currentMethodItem.Text))
                     {
                         var methodItem = new MethodItem();
-                        methodItem.Text = currentMethodItem.Text;
+                        _mapper.Map(currentMethodItem, methodItem);
                         methodItem.StepNo = i + 1;
                         entity.MethodItems.Add(methodItem);
+                    }
+                }
+
+                // trim file to convert to base64
+                if (!string.IsNullOrEmpty(recipe.ImageFile))
+                {
+                    var base64 = recipe.ImageFile.Substring(recipe.ImageFile.LastIndexOf(',') + 1);
+                    byte[] imageBytes = Convert.FromBase64String(base64);
+
+                    using (var stream = new MemoryStream(imageBytes))
+                    {
+                        IFormFile file = new FormFile(stream, 0, imageBytes.Length, "", "");
+                        var fileNameTask = _azureBlobService.UploadSingleAsync(file, imageContainerName);
+                        entity.ImageUrl = fileNameTask.Result;
                     }
                 }
 
@@ -81,18 +94,18 @@ namespace Shopping_List_API.Services
                 //_azureBlobService.UploadSingleAsync()
                 _db.Recipes.Add(entity);
                 _db.SaveChanges();
-                return true;
+                return entity.RecipeId;
             }
             catch (Exception e)
             {
                 var xx = e;
-                return false;
+                return 0;
 
             }
 
         }
 
-        public bool EditRecipe(RecipeVM recipe)
+        public int EditRecipe(RecipeVM recipe)
         {
             var entity = _db.Recipes
                 .Include(rcp => rcp.Category)
@@ -123,9 +136,7 @@ namespace Shopping_List_API.Services
                 if (!string.IsNullOrEmpty(currentIngredient.Name))
                 {
                     var ingredient = new Ingredient();
-                    ingredient.Name = currentIngredient.Name;
-                    ingredient.Measure = currentIngredient.Measure;
-                    ingredient.Quantity = currentIngredient.Quantity;
+                    _mapper.Map(currentIngredient, ingredient);
                     ingredient.PositionNo = i + 1;
                     entity.Ingredients.Add(ingredient);
                 }
@@ -136,7 +147,7 @@ namespace Shopping_List_API.Services
                 if (!string.IsNullOrEmpty(currentMethodItem.Text))
                 {
                     var methodItem = new MethodItem();
-                    methodItem.Text = currentMethodItem.Text;
+                    _mapper.Map(currentMethodItem, methodItem);
                     methodItem.StepNo = i + 1;
                     entity.MethodItems.Add(methodItem);
                 }
@@ -164,7 +175,7 @@ namespace Shopping_List_API.Services
             
             _db.SaveChanges();
 
-            return true;
+            return entity.RecipeId;
         }
 
         public PagedList<Recipe> GetAllRecipes(AdminRecipeParameters adminRecipeParameters)
@@ -174,12 +185,14 @@ namespace Shopping_List_API.Services
                 .Include(rcp => rcp.MethodItems)
                 .Where(r => r.DeletedAt == null);
 
-            return PagedList<Recipe>.ToPagedList(_db.Recipes
+            var x = PagedList<Recipe>.ToPagedList(_db.Recipes
+                .Include(rcp => rcp.Category)
                 .Include(rcp => rcp.Ingredients)
                 .Include(rcp => rcp.MethodItems)
                 .Where(r => r.DeletedAt == null),
                 adminRecipeParameters.PageNumber,
                 adminRecipeParameters.PageSize);
+            return x;
         }
 
         public Recipe GetRecipeById(int id)
@@ -197,6 +210,24 @@ namespace Shopping_List_API.Services
         {
             var base64 = _azureBlobService.GetBase64ByNameAsync(fileName, imageContainerName);
             return base64.Result;
+
+        }
+
+        public bool DeleteRecipeById(int id)
+        {
+            var entity = _db.Recipes
+                .Include(r => r.Ingredients)
+                .Include(r => r.MethodItems)
+                .FirstOrDefault(r => r.RecipeId == id);
+            var entityIngredients = entity.Ingredients.ToList();
+            if (entityIngredients.Count > 0)
+                entityIngredients.ForEach(i => _db.Ingredients.Remove(i));
+            var entityMethodItems = entity.MethodItems.ToList();
+            if (entityMethodItems.Count > 0)
+            entityMethodItems.ForEach(mi => _db.MethodItems.Remove(mi));
+            _db.Recipes.Remove(entity);
+            _db.SaveChanges();
+            return true;
 
         }
     }

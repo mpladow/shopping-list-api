@@ -25,8 +25,12 @@ namespace Shopping_List_API.Entities
         {
             modelBuilder.Entity<Account>().ToTable("Account", "rcp");
             modelBuilder.Entity<Category>().ToTable("Category", "rcp");
-            modelBuilder.Entity<Ingredient>().ToTable("Ingredient", "rcp");
-            modelBuilder.Entity<MethodItem>().ToTable("MethodItem", "rcp");
+            modelBuilder.Entity<Ingredient>().ToTable("Ingredient", "rcp")
+                .Property(i => i.Seperator)
+                .HasDefaultValue(false);
+            modelBuilder.Entity<MethodItem>().ToTable("MethodItem", "rcp")
+                .Property(i => i.Seperator)
+                .HasDefaultValue(false); ;
             modelBuilder.Entity<Recipe>().ToTable("Recipe", "rcp");
             modelBuilder.Entity<List>().ToTable("List", "rcp");
             modelBuilder.Entity<ListItem>().ToTable("ListItem", "rcp");

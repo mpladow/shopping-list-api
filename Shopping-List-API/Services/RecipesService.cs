@@ -62,7 +62,6 @@ namespace Shopping_List_API.Services
         {
             var base64 = _azureBlobService.GetBase64ByNameAsync(fileName, imageContainerName);
             return base64.Result;
-
         }
     }
 }
