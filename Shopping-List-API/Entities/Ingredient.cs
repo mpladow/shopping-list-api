@@ -17,6 +17,7 @@ namespace Shopping_List_API.Entities
         public decimal? Quantity { get; set; }
         public string Measure { get; set; }
         public int PositionNo { get; set; }
+        public bool Seperator { get; set; }
 
         public virtual Recipe Recipe { get; set; }
     }

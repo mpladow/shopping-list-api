@@ -15,5 +15,7 @@ namespace Shopping_List_API.Models
         public decimal? Quantity { get; set; }
         public string Measure { get; set; }
         public int? PositionNo { get; set; }
+        public bool Seperator { get; set; }
+
     }
 }
