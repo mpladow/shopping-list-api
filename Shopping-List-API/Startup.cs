@@ -45,7 +45,7 @@ namespace Shopping_List_API
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<MLDevelopmentContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("MLDevelopment_Dev"))
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             //.UseLazyLoadingProxies()
             );
             // configure DI for application services

@@ -53,7 +53,7 @@ namespace Shopping_List_API.Services
                 return _blobClient;
             }
             
-            var storageConnectionString = _configuration.GetValue<string>("StorageConnectionString");
+            var storageConnectionString = _configuration.GetValue<string>("AzureStorage");
             if (string.IsNullOrEmpty(storageConnectionString))
             {
                 throw new ArgumentException("Config must container StorageConnectionString");
