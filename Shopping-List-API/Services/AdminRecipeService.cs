@@ -117,19 +117,21 @@ namespace Shopping_List_API.Services
             if (entity == null)
                 entity = new Recipe();
 
-            _mapper.Map(recipe, entity);
             entity.Category = _db.Categories.FirstOrDefault(c => c.CategoryId == recipe.CategoryId);
-            _db.Recipes.Update(entity);
+            //_db.Recipes.Update(entity);
 
             //remove existing values from lists
             foreach (var ingredient in entity.Ingredients.ToList())
             {
-                entity.Ingredients.Remove(ingredient);
+
+                _db.Ingredients.Remove(ingredient);
             }
             foreach (var methodItem in entity.MethodItems.ToList())
             {
-                entity.MethodItems.Remove(methodItem);
+                _db.MethodItems.Remove(methodItem);
             }
+            _db.SaveChanges();
+            _mapper.Map(recipe, entity);
             for (int i = 0; i < recipe.Ingredients.Count; i++)
             {
                 var currentIngredient = recipe.Ingredients[i];
