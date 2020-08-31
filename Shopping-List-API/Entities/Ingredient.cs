@@ -18,6 +18,7 @@ namespace Shopping_List_API.Entities
         public string Measure { get; set; }
         public int PositionNo { get; set; }
         public bool Seperator { get; set; }
+        public int RecipeId { get; set; }
 
         public virtual Recipe Recipe { get; set; }
     }

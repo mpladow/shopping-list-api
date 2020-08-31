@@ -19,7 +19,10 @@ namespace Shopping_List_API.Entities
         public string ImageUrl { get; set; }
         public DateTime? DeletedAt { get; set; }
         public DateTime? PublishedAt { get; set; }
+        [ForeignKey("Category")]
+        [Required]
         public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
         public virtual ICollection<MethodItem> MethodItems{ get; set; }
         public virtual ICollection<Ingredient> Ingredients{ get; set; }

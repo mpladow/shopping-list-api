@@ -108,39 +108,50 @@ namespace Shopping_List_API.Services
         public int EditRecipe(RecipeVM recipe)
         {
             var entity = _db.Recipes
-                .Include(rcp => rcp.Category)
-                .Include(rcp => rcp.Ingredients)
-                .Include(rcp => rcp.MethodItems)
+                .Include(r => r.Category)
                 .FirstOrDefault(rcp => rcp.RecipeId == recipe.RecipeId);
 
             // edit existing entity
             if (entity == null)
                 entity = new Recipe();
 
-            entity.Category = _db.Categories.FirstOrDefault(c => c.CategoryId == recipe.CategoryId);
             //_db.Recipes.Update(entity);
 
-            //remove existing values from lists
-            foreach (var ingredient in entity.Ingredients.ToList())
-            {
+            //REMOVE existing values from lists
+            var recipeIngredients = _db.Ingredients.Where(i => i.RecipeId == entity.RecipeId).ToList();
+            _db.Ingredients.RemoveRange(recipeIngredients);
 
-                _db.Ingredients.Remove(ingredient);
-            }
-            foreach (var methodItem in entity.MethodItems.ToList())
-            {
-                _db.MethodItems.Remove(methodItem);
-            }
+            var methodItems = _db.MethodItems.Where(i => i.RecipeId == entity.RecipeId).ToList();
+            _db.MethodItems.RemoveRange(methodItems);
+
+            //foreach (var ingredient in entity.Ingredients.ToList())
+            //{
+            //    _db.Ingredients.Remove(ingredient);
+            //}
+            //foreach (var methodItem in entity.MethodItems.ToList())
+            //{
+            //    _db.MethodItems.Remove(methodItem);
+            //}
             _db.SaveChanges();
             _mapper.Map(recipe, entity);
-            for (int i = 0; i < recipe.Ingredients.Count; i++)
+            entity.Category = _db.Categories.FirstOrDefault(c => c.CategoryId == recipe.CategoryId);
+            entity.CategoryId = recipe.CategoryId;
+            entity.Ingredients = new List<Ingredient>();
+            entity.MethodItems = new List<MethodItem>();
+
+            for (int i = 0; i < recipe.Ingredients.ToList().Count; i++)
             {
                 var currentIngredient = recipe.Ingredients[i];
                 if (!string.IsNullOrEmpty(currentIngredient.Name))
                 {
                     var ingredient = new Ingredient();
-                    _mapper.Map(currentIngredient, ingredient);
+
+                    ingredient.Name = currentIngredient.Name;
+                    ingredient.Measure = currentIngredient.Measure;
+                    ingredient.Quantity = currentIngredient.Quantity;
                     ingredient.PositionNo = i + 1;
-                    entity.Ingredients.Add(ingredient);
+                    ingredient.RecipeId = entity.RecipeId;
+                    _db.Ingredients.Add(ingredient);
                 }
             }
             for (int i = 0; i < recipe.MethodItems.Count; i++)
@@ -149,9 +160,11 @@ namespace Shopping_List_API.Services
                 if (!string.IsNullOrEmpty(currentMethodItem.Text))
                 {
                     var methodItem = new MethodItem();
-                    _mapper.Map(currentMethodItem, methodItem);
+                    methodItem.Text = currentMethodItem.Text;
                     methodItem.StepNo = i + 1;
-                    entity.MethodItems.Add(methodItem);
+                    methodItem.RecipeId = entity.RecipeId;
+                    methodItem.Seperator = currentMethodItem.Seperator;
+                    _db.MethodItems.Add(methodItem);
                 }
             }
 
@@ -173,7 +186,7 @@ namespace Shopping_List_API.Services
                 }
             }
 
-            _db.Recipes.Update(entity);
+            //_db.Recipes.Update(entity);
             
             _db.SaveChanges();
 
