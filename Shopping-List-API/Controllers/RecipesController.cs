@@ -101,8 +101,10 @@ namespace Shopping_List_API.Controllers
             // get image from azure
             if (model.ImageUrl != null)
             {
-                var base64 = _recipesService.GetBase64RecipeImage(model.ImageUrl);
-                model.ImageFile = base64;
+                //var base64 = _recipesService.GetBase64RecipeImage(model.ImageUrl);
+                //model.ImageFile = base64;
+                var url = _recipesService.GetUri(model.ImageUrl);
+                model.ImageFile = url;
             }
             model.Ingredients.OrderBy(i => i.PositionNo).ToList();
             model.MethodItems.OrderBy(i => i.StepNo).ToList();

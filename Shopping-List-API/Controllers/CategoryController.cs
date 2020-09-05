@@ -18,10 +18,13 @@ namespace Shopping_List_API.Controllers
     {
         private IMapper _mapper;
         private ICategoryService _categoryService;
-        public CategoryController(IMapper mapper, ICategoryService categoryService)
+        private IAzureBlobService _azureBlobService;
+
+        public CategoryController(IMapper mapper, ICategoryService categoryService, IAzureBlobService azureBlobService)
         {
             _mapper = mapper;
             _categoryService = categoryService;
+            _azureBlobService = azureBlobService;
         }
         // GET: api/Category
         [HttpGet]
@@ -31,11 +34,16 @@ namespace Shopping_List_API.Controllers
 
             // map the values to vm
             var model = _mapper.Map<List<CategoryVM>>(categoriesFromService);
+            // get all images 
+            var categoryImages = _categoryService.GetAllUrisByContainer();
+
             model.ForEach(c =>
             {
                 if (c.ImageUrl != null)
                 {
-                    c.ImageBase64 = _categoryService.GetBase64Image(c.ImageUrl);
+                    //c.ImageBase64 = _categoryService.GetBase64Image(c.ImageUrl);
+                    var imageUri = categoryImages.FirstOrDefault(ci => ci.AbsoluteUri.Contains(c.ImageUrl));
+                    c.ImageBase64 = imageUri.AbsoluteUri;
                 }
             });
             return model;

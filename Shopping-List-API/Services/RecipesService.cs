@@ -14,6 +14,8 @@ namespace Shopping_List_API.Services
         Recipe GetRecipeById(int id);
         PagedList<Recipe> GetRecipesByCategory(RecipeParameters recipeParameters);
         string GetBase64RecipeImage(string fileName);
+        string GetUri(string fileName);
+        List<Uri> GetAllUrisByContainer();
     }
     public class RecipesService : IRecipesService
     {
@@ -58,10 +60,21 @@ namespace Shopping_List_API.Services
                 recipeParameters.PageNumber,
                 recipeParameters.PageSize);
         }
+        // IMAGE LOADING FROM AZURE STORAGE
         public string GetBase64RecipeImage(string fileName)
         {
             var base64 = _azureBlobService.GetBase64ByNameAsync(fileName, imageContainerName);
             return base64.Result;
+        }
+        public string GetUri(string fileName)
+        {
+            var url = _azureBlobService.GetUriByNameAsync(fileName, imageContainerName);
+            return url.Result.AbsoluteUri;
+        }
+        public List<Uri> GetAllUrisByContainer()
+        {
+            var list = _azureBlobService.GetMultipleUriByContainerAsync(imageContainerName);
+            return list.Result.ToList();
         }
     }
 }
