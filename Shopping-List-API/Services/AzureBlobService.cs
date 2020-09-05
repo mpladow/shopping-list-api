@@ -10,7 +10,7 @@ namespace Shopping_List_API.Services
 {
     public interface IAzureBlobService
     {
-        Task<IEnumerable<Uri>> ListAsync(string containerName);
+        Task<IEnumerable<Uri>> GetMultipleUriByContainerAsync(string containerName);
         Task<Uri> GetUriByNameAsync(string name, string containerName);
         Task<string> GetBase64ByNameAsync(string name, string containerName);
         Task UploadMultipleAsync(IFormFileCollection files, string containerName);
@@ -69,10 +69,10 @@ namespace Shopping_List_API.Services
             return base64;
         }
 
-        public async Task<IEnumerable<Uri>> ListAsync(string name)
+        public async Task<IEnumerable<Uri>> GetMultipleUriByContainerAsync(string containerName)
         {
             // get a list of blobs
-            var blobContainer = await _azureBlobConnectionFactory.GetBlobContainer(name);
+            var blobContainer = await _azureBlobConnectionFactory.GetBlobContainer(containerName);
             var blobList = new List<Uri>();
             // need to create a null continuation token
             BlobContinuationToken blobContinuationToken = null;

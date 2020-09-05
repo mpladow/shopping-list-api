@@ -17,6 +17,8 @@ namespace Shopping_List_API.Services
         List<Category> GetAllCategories();
         Category GetCategoryById(int id);
         string GetBase64Image(string fileName);
+        string GetUri(string fileName);
+        List<Uri> GetAllUrisByContainer();
         int NewCategory(CategoryVM model);
         int EditCategory(CategoryVM model);
 
@@ -71,6 +73,16 @@ namespace Shopping_List_API.Services
         {
             var base64 = _azureBlobService.GetBase64ByNameAsync(fileName, imageContainerName);
             return base64.Result;
+        }
+        public string GetUri(string fileName)
+        {
+            var url = _azureBlobService.GetUriByNameAsync(fileName, "shopping-app-categories");
+            return url.Result.AbsoluteUri;
+        }
+        public List<Uri> GetAllUrisByContainer()
+        {
+            var list = _azureBlobService.GetMultipleUriByContainerAsync(imageContainerName);
+            return list.Result.ToList();
         }
 
 

@@ -151,6 +151,7 @@ namespace Shopping_List_API.Services
                     ingredient.Quantity = currentIngredient.Quantity;
                     ingredient.PositionNo = i + 1;
                     ingredient.RecipeId = entity.RecipeId;
+                    ingredient.Seperator = currentIngredient.Seperator;
                     _db.Ingredients.Add(ingredient);
                 }
             }
