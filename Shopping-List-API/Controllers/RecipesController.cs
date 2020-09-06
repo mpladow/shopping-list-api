@@ -48,6 +48,20 @@ namespace Shopping_List_API.Controllers
                 ImageUrl = r.ImageUrl
             }).ToList();
 
+            // get all images from container
+            var uris = _recipesService.GetAllUrisByContainer();
+            list.ForEach(r =>
+            {
+                if (r.ImageUrl != null)
+                {
+                    var uri = uris.FirstOrDefault(u => u.AbsoluteUri.Contains(r.ImageUrl));
+                    if (uri != null)
+                    {
+                        r.ImageFile = uri.AbsoluteUri;
+                    }
+                }
+            });
+
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metaData));
 
             return list;
@@ -76,12 +90,16 @@ namespace Shopping_List_API.Controllers
                 DescriptionSecondary = r.DescriptionSecondary,
                 ImageUrl = r.ImageUrl
             }).ToList();
+            var uris = _recipesService.GetAllUrisByContainer();
             list.ForEach(r =>
             {
                 if (r.ImageUrl != null)
                 {
-                    var base64 = _recipesService.GetBase64RecipeImage(r.ImageUrl);
-                    r.ImageFile = base64;
+                    var uri = uris.FirstOrDefault(u => u.AbsoluteUri.Contains(r.ImageUrl));
+                    if (uri!= null)
+                    {
+                        r.ImageFile = uri.AbsoluteUri;
+                    }
                 }
             });
 
@@ -110,6 +128,8 @@ namespace Shopping_List_API.Controllers
             model.MethodItems.OrderBy(i => i.StepNo).ToList();
             return model;
         }
+
+
 
         // POST: api/Recipes
         [HttpPost]

@@ -16,6 +16,7 @@ namespace Shopping_List_API.Services
         string GetBase64RecipeImage(string fileName);
         string GetUri(string fileName);
         List<Uri> GetAllUrisByContainer();
+        PagedList<Recipe> GetRecipesByQuery(RecipeParameters recipeParameters); 
     }
     public class RecipesService : IRecipesService
     {
@@ -36,7 +37,8 @@ namespace Shopping_List_API.Services
                 .Include(rcp => rcp.Category)
                 .Include(rcp => rcp.Ingredients)
                 .Include(rcp => rcp.MethodItems)
-                .Where(r => r.DeletedAt == null),
+                .Where(r => r.DeletedAt == null)
+                .Where(r => string.IsNullOrEmpty(recipeParameters.Text) || r.Name.Contains(recipeParameters.Text) || r.Category.Name.Contains(recipeParameters.Text)),
                 recipeParameters.PageNumber,
                 recipeParameters.PageSize);
         }
@@ -75,6 +77,11 @@ namespace Shopping_List_API.Services
         {
             var list = _azureBlobService.GetMultipleUriByContainerAsync(imageContainerName);
             return list.Result.ToList();
+        }
+
+        public PagedList<Recipe> GetRecipesByQuery(RecipeParameters recipeParameters)
+        {
+            throw new NotImplementedException();
         }
     }
 }
