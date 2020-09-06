@@ -12,5 +12,6 @@ namespace Shopping_List_API.Models
     public class RecipeParameters: QueryStringParameters
     {
         public int Id { get; set; }
+        public string Text { get; set; }
     }
 }
