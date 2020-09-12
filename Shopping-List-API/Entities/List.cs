@@ -13,6 +13,8 @@ namespace Shopping_List_API.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ListId { get; set; }
+        public string ListName { get; set; }
+        public DateTime CreatedAt { get; set; }
         public virtual Account Account { get; set; }
         public virtual ICollection<ListItem> ListItems{ get; set; }
     }
