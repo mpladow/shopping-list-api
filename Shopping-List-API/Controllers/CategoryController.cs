@@ -42,8 +42,14 @@ namespace Shopping_List_API.Controllers
                 if (c.ImageUrl != null)
                 {
                     //c.ImageBase64 = _categoryService.GetBase64Image(c.ImageUrl);
-                    var imageUri = categoryImages.FirstOrDefault(ci => ci.AbsoluteUri.Contains(c.ImageUrl));
-                    c.ImageBase64 = imageUri.AbsoluteUri;
+                    var imageUri = categoryImages.FirstOrDefault(ci => ci.AbsoluteUri.Contains(c.ImageUrl) || ci.AbsolutePath.Contains(c.ImageUrl));
+
+                    if (imageUri != null)
+                    {
+                        c.ImageBase64 = imageUri.AbsoluteUri;
+                    }
+
+
                 }
             });
             return model;
@@ -89,6 +95,12 @@ namespace Shopping_List_API.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+        }
+        [HttpPost]
+        public bool ReorderCategories(List<CategoryVM> model)
+        {
+            return _categoryService.SetOrder(model);
+
         }
     }
 }

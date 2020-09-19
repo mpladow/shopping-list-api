@@ -50,8 +50,8 @@ namespace Shopping_List_API
             );
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IRecipesService, RecipesService>();
-            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddTransient<IRecipesService, RecipesService>();
+            services.AddTransient<ICategoryService, CategoryService>();
             services.AddScoped<IAdminRecipeService, AdminRecipeService>();
 
             // setup AutoMapper
@@ -102,7 +102,7 @@ namespace Shopping_List_API
                 x.SaveToken = true;
             });
             services.AddTransient<IAzureBlobConnectionFactory, AzureBlobConnectionFactory>();
-            services.AddSingleton<IAzureBlobService, AzureBlobService>();
+            services.AddTransient<IAzureBlobService, AzureBlobService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

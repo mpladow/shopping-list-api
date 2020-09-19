@@ -6,6 +6,7 @@ using Shopping_List_API.Entities;
 using Shopping_List_API.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Shopping_List_API.Services
         List<Uri> GetAllUrisByContainer();
         int NewCategory(CategoryVM model);
         int EditCategory(CategoryVM model);
+        bool SetOrder(List<CategoryVM> model);
 
     }
     public class CategoryService : ICategoryService
@@ -63,6 +65,26 @@ namespace Shopping_List_API.Services
                 }
             }
             return entity.CategoryId;
+        }
+        public bool SetOrder(List<CategoryVM> model)
+        {
+            for (int i = 0; i < model.Count; i++)
+            {
+                var entity = _db.Categories.FirstOrDefault(c => c.CategoryId == model[i].CategoryId);
+
+                if (entity != null)
+                {
+                    _mapper.Map(model[i], entity);
+
+                    // trim file to convert to base64
+                    entity.Order = i + 1;
+
+                    _db.Categories.Update(entity);
+                    _db.SaveChanges();
+                }
+
+            }
+            return true;
         }
 
         public List<Category> GetAllCategories()
