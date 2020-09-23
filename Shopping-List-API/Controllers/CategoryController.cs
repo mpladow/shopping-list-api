@@ -71,18 +71,28 @@ namespace Shopping_List_API.Controllers
 
         // POST: api/Category
         [HttpPost]
-        public int Post([FromBody] CategoryVM model)
+        public IActionResult Post([FromBody] CategoryVM model)
         {
-            var categoryId = model.CategoryId;
-            if (model.CategoryId > 0)
+            try
             {
-                categoryId = _categoryService.EditCategory(model);
+                var categoryId = model.CategoryId;
+                if (model.CategoryId > 0)
+                {
+                    categoryId = _categoryService.EditCategory(model);
+                }
+                else
+                {
+                    categoryId = _categoryService.NewCategory(model);
+                }
+                return Ok(categoryId);
             }
-            else
+            catch (Exception e)
             {
-                categoryId = _categoryService.NewCategory(model);
+                var x = e;
+                throw;
             }
-            return categoryId;
+
+           
         }
 
         // PUT: api/Category/5
@@ -97,6 +107,7 @@ namespace Shopping_List_API.Controllers
         {
         }
         [HttpPost]
+        [Route("reordercategories")]
         public bool ReorderCategories(List<CategoryVM> model)
         {
             return _categoryService.SetOrder(model);
